@@ -44,14 +44,14 @@ fun6() {
     if [ "$confirm" != 'y' ]; then
         return
     fi
-    sed -n '1673, 1682 s/\([0-9]*\)-\([a-zA-Z]*\)-\([0-9]*\)/\3\2\1/p' $1 | sed 's/Jan/01/; s/Feb/02/; s/Mar/03/; s/Apr/04/; s/May/05/; s/Jun/06/; s/Jul/07/; s/Aug/08/; s/Sep/09/; s/Oct/10/; s/Nov/11/; s/Dec/12/'
+    tail -n 10 $1 | sed 's/\([0-9]*\)-\([a-zA-Z]*\)-\([0-9]*\)/\3\2\1/' | sed 's/Jan/01/; s/Feb/02/; s/Mar/03/; s/Apr/04/; s/May/05/; s/Jun/06/; s/Jul/07/; s/Aug/08/; s/Sep/09/; s/Oct/10/; s/Nov/11/; s/Dec/12/'
 }
 
 fun7() {
     echo -n "Please enter the ‘user id’(1~943) :"
     read userId
     echo $userId
-    awk -v userId="$userId" '{if($1 == userId && cnt < 10) {cnt++; print $2}}' $2 | sort -k 1 -n | awk '{printf "%s|", $0} END {printf "%s\n\n", $0}'
+    awk -v userId="$userId" '{if($1 == userId && cnt < 10) {cnt++; print $2}}' $2 | sort -k 1 -n | awk '{cnt ++; elem[cnt] = $0} END {for(key in elem){if(key != cnt){printf "%s|", elem[key]} else{printf "%s\n\n", elem[key]}}}'
     awk -v userId="$userId" '{if(NR == FNR) {if($1 == userId && cnt < 10) {cnt++; data[$2]} next}} {FS = "|"} $1 in data {print $1,$2}' $2 $1 | sed 's/ /|/'
 }
 
